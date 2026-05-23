@@ -1,0 +1,763 @@
+/* ============================================================
+   ChapterAI – Panel Styles
+   Dark glassmorphism floating sidebar for YouTube Studio
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap');
+
+/* ---- CSS Variables ---- */
+:root {
+  --chai-bg: rgba(15, 15, 20, 0.92);
+  --chai-bg-solid: #0f0f14;
+  --chai-border: rgba(255, 255, 255, 0.08);
+  --chai-border-hover: rgba(255, 255, 255, 0.14);
+  --chai-accent: #FF0033;
+  --chai-accent-glow: rgba(255, 0, 51, 0.35);
+  --chai-accent-dim: rgba(255, 0, 51, 0.12);
+  --chai-text: #e8e8ed;
+  --chai-text-dim: #8a8a9a;
+  --chai-text-muted: #555568;
+  --chai-success: #00e676;
+  --chai-success-bg: rgba(0, 230, 118, 0.12);
+  --chai-warning: #ffab40;
+  --chai-error: #ff5252;
+  --chai-surface: rgba(255, 255, 255, 0.04);
+  --chai-surface-hover: rgba(255, 255, 255, 0.07);
+  --chai-radius: 16px;
+  --chai-radius-sm: 10px;
+  --chai-radius-xs: 6px;
+  --chai-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4);
+  --chai-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --chai-font-mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
+  --chai-font-sans: 'Syne', 'Inter', system-ui, sans-serif;
+}
+
+/* ---- Panel Container ---- */
+#chapterai-panel {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  width: 380px;
+  max-height: calc(100vh - 120px);
+  background: var(--chai-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--chai-border);
+  border-radius: var(--chai-radius);
+  box-shadow: var(--chai-shadow);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--chai-font-sans);
+  color: var(--chai-text);
+  opacity: 0;
+  transform: translateX(20px) scale(0.97);
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+#chapterai-panel.visible {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+}
+
+#chapterai-panel.dragging {
+  transition: none;
+  user-select: none;
+}
+
+/* ---- Glow accent on top ---- */
+#chapterai-panel::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--chai-accent), transparent);
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+/* ---- Header ---- */
+.chai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--chai-border);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.chai-header:active {
+  cursor: grabbing;
+}
+
+.chai-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chai-logo-icon {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px var(--chai-accent-glow));
+}
+
+.chai-logo-text {
+  font-family: var(--chai-font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chai-close-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--chai-surface);
+  border-radius: 8px;
+  color: var(--chai-text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--chai-transition);
+  line-height: 1;
+}
+
+.chai-close-btn:hover {
+  background: rgba(255, 82, 82, 0.15);
+  color: var(--chai-error);
+  transform: rotate(90deg);
+}
+
+/* ---- Body ---- */
+.chai-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+.chai-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chai-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chai-body::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+/* ---- Generate Button ---- */
+.chai-generate-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--chai-accent) 0%, #cc0029 100%);
+  border: none;
+  border-radius: var(--chai-radius-sm);
+  color: #fff;
+  font-family: var(--chai-font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all var(--chai-transition);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+
+.chai-generate-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--chai-transition);
+}
+
+.chai-generate-btn:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.chai-generate-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px var(--chai-accent-glow);
+}
+
+.chai-generate-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.chai-generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chai-generate-btn .btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ---- Loading State ---- */
+.chai-loading {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0;
+}
+
+.chai-loading.active {
+  display: flex;
+}
+
+.chai-pulse-ring {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.chai-pulse-ring::before,
+.chai-pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--chai-accent);
+}
+
+.chai-pulse-ring::before {
+  animation: chai-spin 1s linear infinite;
+}
+
+.chai-pulse-ring::after {
+  inset: 6px;
+  border-top-color: rgba(255, 0, 51, 0.4);
+  animation: chai-spin 1.5s linear infinite reverse;
+}
+
+@keyframes chai-spin {
+  to { transform: rotate(360deg); }
+}
+
+.chai-loading-text {
+  font-size: 13px;
+  color: var(--chai-text-dim);
+  letter-spacing: 0.04em;
+}
+
+.chai-loading-text::after {
+  content: '';
+  animation: chai-dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes chai-dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+/* ---- Status Messages ---- */
+.chai-status {
+  padding: 12px 16px;
+  border-radius: var(--chai-radius-xs);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: none;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.chai-status.active {
+  display: flex;
+}
+
+.chai-status-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+  margin-top: 1px;
+}
+
+.chai-status.error {
+  background: rgba(255, 82, 82, 0.1);
+  border: 1px solid rgba(255, 82, 82, 0.2);
+  color: var(--chai-error);
+}
+
+.chai-status.warning {
+  background: rgba(255, 171, 64, 0.1);
+  border: 1px solid rgba(255, 171, 64, 0.2);
+  color: var(--chai-warning);
+}
+
+.chai-status.info {
+  background: rgba(100, 180, 255, 0.1);
+  border: 1px solid rgba(100, 180, 255, 0.2);
+  color: #64b4ff;
+}
+
+/* ---- Results Area ---- */
+.chai-results {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.chai-results.active {
+  display: flex;
+}
+
+.chai-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.chai-results-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--chai-text-dim);
+}
+
+.chai-chapter-count {
+  font-family: var(--chai-font-mono);
+  font-size: 11px;
+  color: var(--chai-text-muted);
+  background: var(--chai-surface);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* ---- Chapter Row ---- */
+.chai-chapter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--chai-radius-xs);
+  background: var(--chai-surface);
+  transition: all var(--chai-transition);
+  position: relative;
+  group: chapter;
+  animation: chai-row-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.chai-chapter-row:hover {
+  background: var(--chai-surface-hover);
+}
+
+@keyframes chai-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chai-timestamp {
+  font-family: var(--chai-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--chai-accent);
+  white-space: nowrap;
+  min-width: 40px;
+  flex-shrink: 0;
+}
+
+.chai-separator {
+  color: var(--chai-text-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.chai-title {
+  font-family: var(--chai-font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--chai-text);
+  flex: 1;
+  outline: none;
+  border: none;
+  background: none;
+  min-width: 0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background var(--chai-transition);
+}
+
+.chai-title:focus {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.chai-title[contenteditable="true"]:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.chai-delete-btn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--chai-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all var(--chai-transition);
+  flex-shrink: 0;
+}
+
+.chai-chapter-row:hover .chai-delete-btn {
+  opacity: 1;
+}
+
+.chai-delete-btn:hover {
+  background: rgba(255, 82, 82, 0.15);
+  color: var(--chai-error);
+}
+
+/* ---- Action Buttons ---- */
+.chai-actions {
+  display: none;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--chai-border);
+}
+
+.chai-actions.active {
+  display: flex;
+}
+
+.chai-action-btn {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid var(--chai-border);
+  border-radius: var(--chai-radius-sm);
+  background: var(--chai-surface);
+  color: var(--chai-text);
+  font-family: var(--chai-font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--chai-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  letter-spacing: 0.01em;
+}
+
+.chai-action-btn:hover {
+  background: var(--chai-surface-hover);
+  border-color: var(--chai-border-hover);
+  transform: translateY(-1px);
+}
+
+.chai-action-btn:active {
+  transform: translateY(0);
+}
+
+.chai-action-btn.primary {
+  background: linear-gradient(135deg, var(--chai-accent) 0%, #cc0029 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.chai-action-btn.primary:hover {
+  box-shadow: 0 4px 20px var(--chai-accent-glow);
+}
+
+.chai-action-btn.success {
+  background: var(--chai-success-bg);
+  border-color: rgba(0, 230, 118, 0.2);
+  color: var(--chai-success);
+}
+
+/* ---- Toast Notification ---- */
+#chapterai-toast {
+  position: fixed;
+  bottom: 32px;
+  right: 24px;
+  padding: 12px 24px;
+  background: rgba(0, 230, 118, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 230, 118, 0.25);
+  border-radius: var(--chai-radius-sm);
+  color: var(--chai-success);
+  font-family: var(--chai-font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  z-index: 9999999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+#chapterai-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ---- Footer ---- */
+.chai-footer {
+  padding: 10px 20px;
+  border-top: 1px solid var(--chai-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chai-footer-text {
+  font-size: 10px;
+  color: var(--chai-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chai-footer-text span {
+  color: var(--chai-accent);
+}
+
+/* ---- Keyboard shortcut hint ---- */
+.chai-shortcut-hint {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--chai-text-muted);
+}
+
+.chai-shortcut-hint kbd {
+  font-family: var(--chai-font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--chai-surface);
+  border: 1px solid var(--chai-border);
+  border-radius: 4px;
+  color: var(--chai-text-dim);
+}
+
+/* ---- Retry Button ---- */
+.chai-retry-btn {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: var(--chai-surface);
+  border: 1px solid var(--chai-border);
+  border-radius: var(--chai-radius-xs);
+  color: var(--chai-text);
+  font-family: var(--chai-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--chai-transition);
+}
+
+.chai-retry-btn:hover {
+  background: var(--chai-surface-hover);
+  border-color: var(--chai-border-hover);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  #chapterai-panel {
+    width: calc(100vw - 32px);
+    right: 16px;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+  }
+}
+
+/* ---- Drag Handle Indicator ---- */
+.chai-drag-indicator {
+  width: 32px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  margin: 0 auto 4px;
+  opacity: 0;
+  transition: opacity var(--chai-transition);
+}
+
+.chai-header:hover .chai-drag-indicator {
+  opacity: 1;
+}
+
+/* ---- Settings UI & API Key Input ---- */
+.chai-settings-icon-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--chai-surface);
+  border-radius: 8px;
+  color: var(--chai-text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--chai-transition);
+  margin-right: 8px;
+}
+
+.chai-settings-icon-btn:hover {
+  background: var(--chai-surface-hover);
+  color: var(--chai-text);
+  transform: rotate(45deg);
+}
+
+.chai-settings-panel {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--chai-border);
+  border-radius: var(--chai-radius-sm);
+  padding: 14px;
+  margin-bottom: 16px;
+  animation: chai-fade-in 0.25s ease-out;
+}
+
+.chai-settings-panel.active {
+  display: flex;
+}
+
+.chai-settings-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--chai-text);
+}
+
+.chai-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chai-label {
+  font-size: 11px;
+  color: var(--chai-text-dim);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chai-link {
+  color: var(--chai-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.chai-link:hover {
+  text-decoration: underline;
+}
+
+.chai-input-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.chai-api-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--chai-border);
+  border-radius: var(--chai-radius-xs);
+  padding: 8px 12px;
+  color: var(--chai-text);
+  font-family: var(--chai-font-mono);
+  font-size: 12px;
+  outline: none;
+  transition: all var(--chai-transition);
+}
+
+.chai-api-input:focus {
+  border-color: var(--chai-accent);
+  box-shadow: 0 0 0 1px var(--chai-accent-glow);
+}
+
+.chai-save-key-btn {
+  padding: 8px 14px;
+  background: var(--chai-surface);
+  border: 1px solid var(--chai-border);
+  border-radius: var(--chai-radius-xs);
+  color: var(--chai-text);
+  font-family: var(--chai-font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--chai-transition);
+}
+
+.chai-save-key-btn:hover {
+  background: var(--chai-surface-hover);
+  border-color: var(--chai-border-hover);
+}
+
+.chai-engine-badge {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--chai-accent-dim);
+  color: var(--chai-accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.chai-engine-badge.cloud {
+  background: rgba(100, 180, 255, 0.15);
+  color: #64b4ff;
+}
+
+@keyframes chai-fade-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
